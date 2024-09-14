@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import SymptomForm from './SymptomForm';
+import PredictionChart from './PredictionChart';
 
 const DiseasePrediction = () => {
   const [predictions, setPredictions] = useState([]);
@@ -12,7 +13,7 @@ const DiseasePrediction = () => {
         method: 'GET',
         url: 'https://priaid-symptom-checker-v1.p.rapidapi.com/diagnosis',
         params: {
-          symptoms: JSON.stringify(symptoms.map(s => s.id)),
+          symptoms: JSON.stringify(symptoms),
           gender: 'male',  // Change based on the user's input
           year_of_birth: 1985,  // Change based on the user's input
         },
@@ -36,13 +37,9 @@ const DiseasePrediction = () => {
   return (
     <div>
       <SymptomForm onSubmit={handleSymptomSubmit} />
-      <ul>
-        {predictions.map((disease, index) => (
-          <li key={index}>
-            {disease.Issue.Name} - Probability: {disease.Issue.Accuracy}%
-          </li>
-        ))}
-      </ul>
+      <PredictionChart predictionData={predictions.map((disease, index) => (
+          {label: disease.Issue.Name, value: disease.Issue.Accuracy / 100.0}
+      ))} />
     </div>
   );
 };
